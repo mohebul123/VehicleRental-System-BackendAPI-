@@ -147,7 +147,7 @@ Environment Variables
 To run this project, you will need to add the following environment variables to your .env file
 
 ```bash
-  CONNECTION_STRING = 'postgresql://neondb_owner:npg_aNlwHiDUMMY-CONNECTUION-STRINGoler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+CONNECTION_STRING = 'postgresql://neondb_owner:npg_aNlwHiDUMMY-CONNECTUION-STRINGoler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 
 PORT = DUMMY-PORT
 
@@ -169,7 +169,7 @@ API base URL:
 ```
 ## Github Repository
 
-🔗 
+🔗 https://github.com/mohebul123/VehicleRental-System-BackendAPI-.git
 
 ## Live Deployment
 
