@@ -5,8 +5,7 @@ A complete backend solution for managing a **vehicle rental system**, including 
 ---
 
 ## 🔗 Live API URL
-(Add your deployed URL here)  
-`https://your-api-url.com`
+https://vehiclerentalsystem-seven.vercel.app/
 
 ---
 
