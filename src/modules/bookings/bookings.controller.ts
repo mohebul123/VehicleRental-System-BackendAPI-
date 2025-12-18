@@ -21,9 +21,7 @@ const getAllBookings = async (req: any, res: Response) => {
     res.status(200).json({
       success: true,
       message:
-        req.user.role === "admin"
-          ? "Bookings retrieved successfully"
-          : "Your bookings retrieved successfully",
+        req.user.role === "admin" ? "Bookings retrieved successfully" : "Your bookings retrieved successfully",
       data: bookings,
     });
   } catch (error: any) {

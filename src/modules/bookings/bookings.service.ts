@@ -4,10 +4,10 @@ const autoReturn = async (booking: any) => {
   const today = new Date();
   const end = new Date(booking.rent_end_date);
   if (today > end && booking.status === "active") {
-    await pool.query("UPDATE bookings SET status='returned' WHERE id=$1", [ booking.id, ]);
+    await pool.query(`UPDATE bookings SET status='returned' WHERE id=$1`, [ booking.id, ]);
 
     await pool.query(
-      "UPDATE vehicles SET availability_status='available' WHERE id=$1",
+      `UPDATE vehicles SET availability_status='available' WHERE id=$1`,
       [booking.vehicle_id]
     );
     booking.status = "returned";
@@ -16,7 +16,7 @@ const autoReturn = async (booking: any) => {
 };
 const createBookings= async (payload: any) => {
   const { customer_id,vehicle_id,rent_start_date,rent_end_date}=payload;
-  const vehicleResult =await pool.query("SELECT * FROM vehicles WHERE id=$1", [vehicle_id,]);
+  const vehicleResult =await pool.query(`SELECT * FROM vehicles WHERE id=$1`, [vehicle_id,]);
   if (vehicleResult.rows.length === 0) {
     throw new Error("Vehicle not found");
   }
@@ -41,7 +41,7 @@ const createBookings= async (payload: any) => {
     RETURNING *`, [customer_id, vehicle_id, rent_start_date, rent_end_date, totalPrice] );
   const booking = bookingResult.rows[0];
   await pool.query(
-  "UPDATE vehicles SET availability_status='booked' WHERE id=$1", [vehicle_id] );
+  `UPDATE vehicles SET availability_status='booked' WHERE id=$1`, [vehicle_id] );
   return {
     id: booking.id,
     customer_id:booking.customer_id,
@@ -59,16 +59,16 @@ const createBookings= async (payload: any) => {
 const getAllBookings =async (user: any) =>{
   if (user.role==="admin") {
     const bookings = await pool.query(
-    "SELECT * FROM bookings ORDER BY id DESC");
+    `SELECT * FROM bookings ORDER BY id DESC`);
     const final = [];
     for (let b of bookings.rows) {
       await autoReturn(b);
       const customer = await pool.query(
-      "SELECT name, email FROM users WHERE id=$1",
+      `SELECT name, email FROM users WHERE id=$1`,
       [b.customer_id]
       );
       const vehicle = await pool.query(
-        "SELECT vehicle_name, registration_number FROM vehicles WHERE id=$1", [b.vehicle_id] );
+        `SELECT vehicle_name, registration_number FROM vehicles WHERE id=$1`, [b.vehicle_id] );
       final.push({
         id: b.id,
         customer_id:b.customer_id,
@@ -83,12 +83,12 @@ const getAllBookings =async (user: any) =>{
     return final;
   }
   const bookings=await pool.query(
-    "SELECT * FROM bookings WHERE customer_id=$1 ORDER BY id DESC", [user.id]);
+    `SELECT * FROM bookings WHERE customer_id=$1 ORDER BY id DESC`, [user.id]);
   const final = [];
   for (let b of bookings.rows) {
     await autoReturn(b);
     const vehicle = await pool.query(
-      "SELECT vehicle_name, registration_number, type FROM vehicles WHERE id=$1",[b.vehicle_id]);
+      `SELECT vehicle_name, registration_number, type FROM vehicles WHERE id=$1`,[b.vehicle_id]);
     final.push({
       id: b.id,
       vehicle_id:b.vehicle_id,
@@ -107,7 +107,7 @@ const updateBookingsById =async (
   user:any
 )=>{
   const{status} =payload;
-  const result = await pool.query("SELECT * FROM bookings WHERE id=$1", [ bookingId]);
+  const result = await pool.query(`SELECT * FROM bookings WHERE id=$1`, [ bookingId]);
   if (result.rows.length === 0) {
     throw new Error("Booking not found"); }
   const booking= result.rows[0];
@@ -124,7 +124,7 @@ const updateBookingsById =async (
       throw new Error("You cannot cancel after the rent start date");
     }
     const updated = await pool.query(
-      "UPDATE bookings SET status='cancelled' WHERE id=$1 RETURNING *", [bookingId]);
+      `UPDATE bookings SET status='cancelled' WHERE id=$1 RETURNING *`, [bookingId]);
     return {
       id: updated.rows[0].id,
       customer_id: updated.rows[0].customer_id,
@@ -139,11 +139,11 @@ const updateBookingsById =async (
     if (status !=="returned") {
       throw new Error("Admin can only mark bookings as returned"); }
     const updated = await pool.query(
-      "UPDATE bookings SET status='returned' WHERE id=$1 RETURNING *",
+      `UPDATE bookings SET status='returned' WHERE id=$1 RETURNING *`,
       [bookingId]
     );
     await pool.query(
-      "UPDATE vehicles SET availability_status='available' WHERE id=$1", [booking.vehicle_id]);
+      `UPDATE vehicles SET availability_status='available' WHERE id=$1`, [booking.vehicle_id]);
     return {
       id: updated.rows[0].id,
       customer_id:updated.rows[0].customer_id,
