@@ -24,7 +24,7 @@ const initDB=async() =>{
         `)
 
     await pool.query(`
-         CREATE TABLE IF NOT EXISTS vehicles (
+  CREATE TABLE IF NOT EXISTS vehicles (
   id SERIAL PRIMARY KEY,
   vehicle_name VARCHAR(150) NOT NULL,
   type VARCHAR(20) NOT NULL CHECK (type IN ('car','bike','van','SUV')),

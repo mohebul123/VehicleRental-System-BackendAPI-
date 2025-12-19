@@ -123,8 +123,8 @@ const updateBookingsById =async (
     if (today >= start) {
       throw new Error("You cannot cancel after the rent start date");
     }
-    const updated = await pool.query(
-      `UPDATE bookings SET status='cancelled' WHERE id=$1 RETURNING *`, [bookingId]);
+    const updated = await pool.query( `UPDATE bookings SET status='cancelled' WHERE id=$1 RETURNING *`, [bookingId]);
+      await pool.query(`UPDATE vehicles SET availability_status='available' WHERE id=$1`,[booking.vehicle_id]);
     return {
       id: updated.rows[0].id,
       customer_id: updated.rows[0].customer_id,
@@ -139,11 +139,10 @@ const updateBookingsById =async (
     if (status !=="returned") {
       throw new Error("Admin can only mark bookings as returned"); }
     const updated = await pool.query(
-      `UPDATE bookings SET status='returned' WHERE id=$1 RETURNING *`,
-      [bookingId]
+      `UPDATE bookings SET status='returned' WHERE id=$1 RETURNING *`,[bookingId]
     );
-    await pool.query(
-      `UPDATE vehicles SET availability_status='available' WHERE id=$1`, [booking.vehicle_id]);
+    await pool.query(`UPDATE vehicles SET availability_status='available' WHERE id=$1`, [booking.vehicle_id]);
+
     return {
       id: updated.rows[0].id,
       customer_id:updated.rows[0].customer_id,
